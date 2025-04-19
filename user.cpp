@@ -10,7 +10,7 @@ std::string User::getUsername() const { return this->username; }
 std::string User::getPassword() const { return this->password; }
 std::string User::getName() const { return this->name; }
 
-//Добавление пользователя
+//Р”РѕР±Р°РІР»РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
 void saveUser(const User& user) {
     FILE* file = fopen("users.txt", "a");
     std::string line = user.getUsername() + ";" + user.getPassword() + ";" + user.getName() + "\n";
@@ -18,7 +18,7 @@ void saveUser(const User& user) {
     fclose(file);
 }
 
-//Получение пользователей
+//РџРѕР»СѓС‡РµРЅРёРµ РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№
 std::vector<User> loadUsers() {
     std::vector<User> users;
     FILE* file = fopen("users.txt", "r");
@@ -32,7 +32,7 @@ std::vector<User> loadUsers() {
         if (pos1 != std::string::npos && pos2 != std::string::npos) {
             std::string username = line.substr(0, pos1);
             std::string password = line.substr(pos1 + 1, pos2 - pos1 - 1);
-            std::string name = line.substr(pos2 + 1, line.size() - pos2 - 2); // Убираем \n
+            std::string name = line.substr(pos2 + 1, line.size() - pos2 - 2);
             users.push_back(User(username, password, name));
         }
     }
@@ -40,7 +40,7 @@ std::vector<User> loadUsers() {
     return users;
 }
 
-//Проверка существования пользователя
+//РџСЂРѕРІРµСЂРєР° СЃСѓС‰РµСЃС‚РІРѕРІР°РЅРёСЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
 bool userExists(const std::string& username) {
     std::vector<User> users = loadUsers();
     for (const User& u : users) {
