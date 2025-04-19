@@ -5,119 +5,150 @@
 #include "user.h"
 #include "message.h"
 
-using namespace std;
 
-//Ğåãèñòğàöèÿ
+//Ğ ĞµĞ³Ğ¸ÑÑ‚Ñ€Ğ°Ñ†Ğ¸Ñ
 void registerUser() {
     system("cls");
-    string username, password, name;
-    cout << "Ââåäèòå ëîãèí: ";
-    getline(cin, username);
-    cout << "Ââåäèòå ïàğîëü: ";
-    getline(cin, password);
-    cout << "Ââåäèòå èìÿ: ";
-    getline(cin, name);
+    std::string username, password, name;
+    std::cout << "Ğ’Ğ²ĞµĞ´Ğ¸Ñ‚Ğµ Ğ»Ğ¾Ğ³Ğ¸Ğ½: ";
+    getline(std::cin, username);
+    std::cout << "Ğ’Ğ²ĞµĞ´Ğ¸Ñ‚Ğµ Ğ¿Ğ°Ñ€Ğ¾Ğ»ÑŒ: ";
+    getline(std::cin, password);
+    std::cout << "Ğ’Ğ²ĞµĞ´Ğ¸Ñ‚Ğµ Ğ¸Ğ¼Ñ: ";
+    getline(std::cin, name);
 
-    if (userExists(username)) {
-        cout << "Ëîãèí çàíÿò!\n";
-        cout << "Äëÿ ïğîäîëæåíèÿ íàæìèòå íà END" << std::endl;
+    if (userExists(username) || username == "ALL") {
+        std::cout << "Ğ›Ğ¾Ğ³Ğ¸Ğ½ Ğ·Ğ°Ğ½ÑÑ‚!\n";
+        std::cout << "Ğ”Ğ»Ñ Ğ¿Ñ€Ğ¾Ğ´Ğ¾Ğ»Ğ¶ĞµĞ½Ğ¸Ñ Ğ½Ğ°Ğ¶Ğ¼Ğ¸Ñ‚Ğµ Ğ½Ğ° END" << std::endl;
         while (!GetAsyncKeyState(VK_END)) {}
         return;
     }
 
     User newUser(username, password, name);
     saveUser(newUser);
-    cout << "Ğåãèñòğàöèÿ óñïåøíà!\n";
+    std::cout << "Ğ ĞµĞ³Ğ¸ÑÑ‚Ñ€Ğ°Ñ†Ğ¸Ñ ÑƒÑĞ¿ĞµÑˆĞ½Ğ°!\n";
 }
 
-//Âõîä
+//Ğ’Ñ…Ğ¾Ğ´
 User* loginUser() {
     system("cls");
-    string username, password;
-    cout << "Ââåäèòå ëîãèí: ";
-    getline(cin, username);
-    cout << "Ââåäèòå ïàğîëü: ";
-    getline(cin, password);
+    std::string username, password;
+    std::cout << "Ğ’Ğ²ĞµĞ´Ğ¸Ñ‚Ğµ Ğ»Ğ¾Ğ³Ğ¸Ğ½: ";
+    getline(std::cin, username);
+    std::cout << "Ğ’Ğ²ĞµĞ´Ğ¸Ñ‚Ğµ Ğ¿Ğ°Ñ€Ğ¾Ğ»ÑŒ: ";
+    getline(std::cin, password);
 
-    vector<User> users = loadUsers();
+    std::vector<User> users = loadUsers();
     for (User& u : users) {
         if (u.getUsername() == username && u.getPassword() == password) {
             return new User(u.getUsername(), u.getPassword(), u.getName());
         }
     }
     system("cls");
-    cout << "Íåâåğíûé ëîãèí èëè ïàğîëü!\n";
-    cout << "Äëÿ ïğîäîëæåíèÿ íàæìèòå íà END" << std::endl;
+    std::cout << "ĞĞµĞ²ĞµÑ€Ğ½Ñ‹Ğ¹ Ğ»Ğ¾Ğ³Ğ¸Ğ½ Ğ¸Ğ»Ğ¸ Ğ¿Ğ°Ñ€Ğ¾Ğ»ÑŒ!\n";
+    std::cout << "Ğ”Ğ»Ñ Ğ¿Ñ€Ğ¾Ğ´Ğ¾Ğ»Ğ¶ĞµĞ½Ğ¸Ñ Ğ½Ğ°Ğ¶Ğ¼Ğ¸Ñ‚Ğµ Ğ½Ğ° END" << std::endl;
     while (!GetAsyncKeyState(VK_END)) {}
     return nullptr;
 }
 
-//Ïóáëè÷íîå ñîîáùåíèå (äîïîëíèòåëüíûé ôóíêöèîíàë)
+//ĞŸÑƒĞ±Ğ»Ğ¸Ñ‡Ğ½Ğ¾Ğµ ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ğµ
 void sendToAll(User* user) {
     system("cls");
-    string text;
-    cout << "Ââåäèòå ñîîáùåíèå: ";
-    getline(cin, text);
-    addMessage("messages.txt", message("ALL", user->getUsername(), text));
-    cout << "Ñîîáùåíèå îòïğàâëåíî âñåì!\n";
+    std::string text, tag;
+    std::cout << "Ğ’Ğ²ĞµĞ´Ğ¸Ñ‚Ğµ ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ğµ: ";
+    getline(std::cin, text);
+    std::cout << "Ğ£ĞºĞ°Ğ¶Ğ¸Ñ‚Ğµ Ğ²Ğ°Ğ¶Ğ½Ğ¾ÑÑ‚ÑŒ Ğ²Ğ°ÑˆĞµĞ³Ğ¾ ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ñ (Low, Medium, High): ";
+    getline(std::cin, tag);
+    if (tag != "Low" && tag != "Medium" && tag != "High")
+    {
+        system("cls");
+        std::cout << "ĞĞµĞ²ĞµÑ€Ğ½Ñ‹Ğ¹ Ğ¿Ñ€Ğ¸Ğ¾Ñ€Ğ¸Ñ‚ĞµÑ‚ ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ñ\n";
+        std::cout << "Ğ”Ğ»Ñ Ğ¿Ñ€Ğ¾Ğ´Ğ¾Ğ»Ğ¶ĞµĞ½Ğ¸Ñ Ğ½Ğ°Ğ¶Ğ¼Ğ¸Ñ‚Ğµ Ğ½Ğ° END" << std::endl;
+        while (!GetAsyncKeyState(VK_END)) {}
+        return;
+    }
+    addMessage("messages.txt", message("ALL", user->getUsername(), text, tag));
+    std::cout << "Ğ¡Ğ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ğµ Ğ¾Ñ‚Ğ¿Ñ€Ğ°Ğ²Ğ»ĞµĞ½Ğ¾ Ğ²ÑĞµĞ¼!\n";
 }
 
-//Ïğèâàòíîå ñîîáùåíèå
+//ĞŸÑ€Ğ¸Ğ²Ğ°Ñ‚Ğ½Ğ¾Ğµ ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ğµ
 void sendPrivate(User* user) {
     system("cls");
-    string getter, text;
-    cout << "Ââåäèòå ëîãèí ïîëó÷àòåëÿ: ";
-    getline(cin, getter);
-    cout << "Ââåäèòå ñîîáùåíèå: ";
-    getline(cin, text);
-    addMessage("messages.txt", message(getter, user->getUsername(), text));
-    cout << "Ñîîáùåíèå îòïğàâëåíî!\n";
+    std::string getter, text, tag;
+    std::cout << "Ğ’Ğ²ĞµĞ´Ğ¸Ñ‚Ğµ Ğ»Ğ¾Ğ³Ğ¸Ğ½ Ğ¿Ğ¾Ğ»ÑƒÑ‡Ğ°Ñ‚ĞµĞ»Ñ: ";
+    getline(std::cin, getter);
+    std::cout << "Ğ’Ğ²ĞµĞ´Ğ¸Ñ‚Ğµ ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ğµ: ";
+    getline(std::cin, text);
+    std::cout << "Ğ£ĞºĞ°Ğ¶Ğ¸Ñ‚Ğµ Ğ²Ğ°Ğ¶Ğ½Ğ¾ÑÑ‚ÑŒ Ğ²Ğ°ÑˆĞµĞ³Ğ¾ ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ñ (Low, Medium, High): ";
+    getline(std::cin, tag);
+    if (tag != "Low" && tag != "Medium" && tag != "High")
+    {
+        system("cls");
+        std::cout << "ĞĞµĞ²ĞµÑ€Ğ½Ñ‹Ğ¹ Ğ¿Ñ€Ğ¸Ğ¾Ñ€Ğ¸Ñ‚ĞµÑ‚ ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ñ\n";
+        std::cout << "Ğ”Ğ»Ñ Ğ¿Ñ€Ğ¾Ğ´Ğ¾Ğ»Ğ¶ĞµĞ½Ğ¸Ñ Ğ½Ğ°Ğ¶Ğ¼Ğ¸Ñ‚Ğµ Ğ½Ğ° END" << std::endl;
+        while (!GetAsyncKeyState(VK_END)) {}
+        return;
+    }
+    addMessage("messages.txt", message(getter, user->getUsername(), text, tag));
+    std::cout << "Ğ¡Ğ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ğµ Ğ¾Ñ‚Ğ¿Ñ€Ğ°Ğ²Ğ»ĞµĞ½Ğ¾!\n";
 }
 
-//Ïîêàç ñîîáùåíèé ïîëüçîâàòåëÿ
+//ĞŸĞ¾ĞºĞ°Ğ· ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ğ¹ Ğ¿Ğ¾Ğ»ÑŒĞ·Ğ¾Ğ²Ğ°Ñ‚ĞµĞ»Ñ
 void viewMessages(User* user) {
     system("cls");
-    vector<message> messages = getMessage("messages.txt");
-    cout << "--- Ñîîáùåíèÿ ---\n";
+    std::vector<message> messages = getMessage("messages.txt");
+    std::cout << "--- Ğ¡Ğ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ñ ---\n";
+    std::cout << "Low priority" << std::endl;
     for (const message& msg : messages) {
-        if (msg.getGetter() == user->getUsername() || msg.getGetter() == "ALL") {
-            cout << "Îò: " << msg.getSender() << "\nÒåêñò: " << msg.getText() << "\n\n";
+        if ((msg.getGetter() == user->getUsername() || (msg.getGetter() == "ALL" || msg.getSender() != user->getUsername())) && msg.getTag() == "Low") {
+            std::cout << "ĞÑ‚: " << msg.getSender() << "\nĞ¢ĞµĞºÑÑ‚: " << msg.getText() << "\n\n";
         }
     }
-    system("cls");
-    cout << "Äëÿ ïğîäîëæåíèÿ íàæìèòå íà END" << std::endl;
+    std::cout << "Medium priority" << std::endl;
+    for (const message& msg : messages) {
+        if ((msg.getGetter() == user->getUsername() || (msg.getGetter() == "ALL" || msg.getSender() != user->getUsername())) && msg.getTag() == "Medium") {
+            std::cout << "ĞÑ‚: " << msg.getSender() << "\nĞ¢ĞµĞºÑÑ‚: " << msg.getText() << "\n\n";
+        }
+    }
+    std::cout << "High priority" << std::endl;
+    for (const message& msg : messages) {
+        if ((msg.getGetter() == user->getUsername() || (msg.getGetter() == "ALL" || msg.getSender() != user->getUsername())) && msg.getTag() == "High") {
+            std::cout << "ĞÑ‚: " << msg.getSender() << "\nĞ¢ĞµĞºÑÑ‚: " << msg.getText() << "\n\n";
+        }
+    }
+    std::cout << "Ğ”Ğ»Ñ Ğ¿Ñ€Ğ¾Ğ´Ğ¾Ğ»Ğ¶ĞµĞ½Ğ¸Ñ Ğ½Ğ°Ğ¶Ğ¼Ğ¸Ñ‚Ğµ Ğ½Ğ° END" << std::endl;
     while (!GetAsyncKeyState(VK_END)){}
 }
 
-//Âûáîğ äåéñòâèÿ
+//Ğ’Ñ‹Ğ±Ğ¾Ñ€ Ğ´ĞµĞ¹ÑÑ‚Ğ²Ğ¸Ñ
 void chatMenu(User* user) {
     while (true) {
         system("cls");
-        cout << "1. Îòïğàâèòü âñåì\n2. Ëè÷íîå ñîîáùåíèå\n3. Ïğîñìîòğ ñîîáùåíèé\n4. Âûõîä\nÂûáåğèòå: ";
-        string choice;
-        getline(cin, choice);
+        std::cout << "1. ĞÑ‚Ğ¿Ñ€Ğ°Ğ²Ğ¸Ñ‚ÑŒ Ğ²ÑĞµĞ¼\n2. Ğ›Ğ¸Ñ‡Ğ½Ğ¾Ğµ ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ğµ\n3. ĞŸÑ€Ğ¾ÑĞ¼Ğ¾Ñ‚Ñ€ ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ğ¹\n4. Ğ’Ñ‹Ñ…Ğ¾Ğ´\nĞ’Ñ‹Ğ±ĞµÑ€Ğ¸Ñ‚Ğµ: ";
+        std::string choice;
+        getline(std::cin, choice);
 
         if (choice == "1") sendToAll(user);
         else if (choice == "2") sendPrivate(user);
         else if (choice == "3") viewMessages(user);
         else if (choice == "4") break;
         else {
-            cout << "Íåâåğíûé âûáîğ!\n";
+            std::cout << "ĞĞµĞ²ĞµÑ€Ğ½Ñ‹Ğ¹ Ğ²Ñ‹Ğ±Ğ¾Ñ€!\n";
             system("cls");
-            cout << "Äëÿ ïğîäîëæåíèÿ íàæìèòå íà END" << std::endl;
+            std::cout << "Ğ”Ğ»Ñ Ğ¿Ñ€Ğ¾Ğ´Ğ¾Ğ»Ğ¶ĞµĞ½Ğ¸Ñ Ğ½Ğ°Ğ¶Ğ¼Ğ¸Ñ‚Ğµ Ğ½Ğ° END" << std::endl;
             while (!GetAsyncKeyState(VK_END)) {}
         }
     }
 }
 
-//Òî÷êà âõîäà ïğîãğàììû
+//Ğ¢Ğ¾Ñ‡ĞºĞ° Ğ²Ñ…Ğ¾Ğ´Ğ° Ğ¿Ñ€Ğ¾Ğ³Ñ€Ğ°Ğ¼Ğ¼Ñ‹
 int main() {
     setlocale(LC_ALL, "RUS");
     while (true) {
         system("cls");
-        cout << "1. Ğåãèñòğàöèÿ\n2. Âõîä\n3. Âûõîä\nÂûáåğèòå: ";
-        string choice;
-        getline(cin, choice);
+        std::cout << "1. Ğ ĞµĞ³Ğ¸ÑÑ‚Ñ€Ğ°Ñ†Ğ¸Ñ\n2. Ğ’Ñ…Ğ¾Ğ´\n3. Ğ’Ñ‹Ñ…Ğ¾Ğ´\nĞ’Ñ‹Ğ±ĞµÑ€Ğ¸Ñ‚Ğµ: ";
+        std::string choice;
+        getline(std::cin, choice);
 
         if (choice == "1") registerUser();
         else if (choice == "2") {
@@ -129,9 +160,9 @@ int main() {
         }
         else if (choice == "3") break;
         else {
-            cout << "Íåâåğíûé âûáîğ!\n";
+            std::cout << "ĞĞµĞ²ĞµÑ€Ğ½Ñ‹Ğ¹ Ğ²Ñ‹Ğ±Ğ¾Ñ€!\n";
             system("cls");
-            cout << "Äëÿ ïğîäîëæåíèÿ íàæìèòå íà END" << std::endl;
+            std::cout << "Ğ”Ğ»Ñ Ğ¿Ñ€Ğ¾Ğ´Ğ¾Ğ»Ğ¶ĞµĞ½Ğ¸Ñ Ğ½Ğ°Ğ¶Ğ¼Ğ¸Ñ‚Ğµ Ğ½Ğ° END" << std::endl;
             while (!GetAsyncKeyState(VK_END)) {}
         }
     }
