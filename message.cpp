@@ -6,24 +6,6 @@
 #include <string>
 #include <iostream>
 
-void message::setGetter(std::string g)
-{
-	if (g.size() < 10) { this->Getter = g; }
-}
-
-
-void message::setSender(std::string s) 
-{
-	if (s.size() < 10) { this->Sender = s; }
-}
-
-
-void message::setText(std::string t)
-{
-	if (t.size() < 5000) { this->Text = t; }
-}
-
-
 std::string message::getGetter() const { return this->Getter; }
 
 
@@ -33,12 +15,15 @@ std::string message::getSender() const { return this->Sender; }
 std::string message::getText() const { return this->Text; }
 
 
-message::message(std::string Getter = "None", std::string Sender = "None", std::string Text = "None") : Getter(Getter), Sender(Sender), Text(Text) {};
+std::string message::getTag() const { return this->Tag; }
 
 
-message::message() : Getter("None"), Sender("None"), Text("None") {};
+message::message(std::string Getter = "None", std::string Sender = "None", std::string Text = "None", std::string Tag = "None") : Getter(Getter), Sender(Sender), Text(Text), Tag(Tag) {};
 
-//Отправка сообщения
+
+message::message() : Getter("None"), Sender("None"), Text("None"), Tag("None") {};
+
+//РћС‚РїСЂР°РІРєР° СЃРѕРѕР±С‰РµРЅРёСЏ
 void addMessage(const char* Path, message Msg)
 {
 	std::string buffer("");
@@ -59,14 +44,14 @@ void addMessage(const char* Path, message Msg)
 
 	FILE* file = fopen(Path, "w");
 
-	std::string result = buffer + Msg.getGetter() + ";" + Msg.getText() + ";" + Msg.getSender() + "\n";
+	std::string result = buffer + Msg.getGetter() + ";" + Msg.getText() + ";" + Msg.getSender() + ";" + Msg.getTag() + "\n";
 
 	fputs(result.c_str(), file);
 
 	fclose(file);
 }
 
-//Получение сообщений
+//РџРѕР»СѓС‡РµРЅРёРµ СЃРѕРѕР±С‰РµРЅРёР№
 std::vector<message>  getMessage(const char* Path)
 {
 	std::vector<message> res;
@@ -81,6 +66,7 @@ std::vector<message>  getMessage(const char* Path)
 	std::string Getter;
 	std::string Text;
 	std::string Sender;
+	std::string Tag;
 
 	std::string arg;
 	char ch;
@@ -95,13 +81,14 @@ std::vector<message>  getMessage(const char* Path)
 			{
 			case 0: Getter = arg; break;
 			case 1: Text = arg; break;
+			case 2: Sender = Sender; break;
 			}
 			i++;
 			arg.clear();
 		}
 		else if (ch == '\n') 
 		{
-			Sender = arg; res.push_back(message(Getter, Sender, Text));
+			Tag = arg; res.push_back(message(Getter, Sender, Text, Tag));
 			arg.clear();
 			i = 0;
 		}
